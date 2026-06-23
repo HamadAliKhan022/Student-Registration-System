@@ -9,13 +9,13 @@ import {
 
 export default function StudentForm({ onSubmit, serverError }) {
   const {
-    register,
     control,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting }
   } = useForm({
     mode: "onTouched",
+    reValidateMode: "onChange",
     defaultValues: {
       fullName: "",
       email: "",
@@ -55,51 +55,78 @@ export default function StudentForm({ onSubmit, serverError }) {
         </Alert>
       )}
 
-      <TextField
-        label="Full name"
-        placeholder="Enter your full name"
-        error={Boolean(errors.fullName)}
-        helperText={errors.fullName?.message}
-        sx={{ gridColumn: "1 / -1" }}
-        {...register("fullName", {
+      {/* Full Name */}
+      <Controller
+        name="fullName"
+        control={control}
+        rules={{
           required: "Full name is required",
           validate: (value) =>
-            value.trim().length >= 2 ||
-            "Enter at least 2 characters"
-        })}
+            value.trim().length >= 2 || "Enter at least 2 characters"
+        }}
+        render={({ field, fieldState }) => (
+          <TextField
+            {...field}
+            value={field.value ?? ""}
+            label="Full name"
+            placeholder="Enter your full name"
+            error={Boolean(fieldState.error)}
+            helperText={fieldState.error?.message}
+            sx={{ gridColumn: "1 / -1" }}
+          />
+        )}
       />
 
-      <TextField
-        label="Email address"
-        placeholder="student@example.com"
-        type="email"
-        error={Boolean(errors.email)}
-        helperText={errors.email?.message}
-        sx={{ gridColumn: "1 / -1" }}
-        {...register("email", {
+      {/* Email */}
+      <Controller
+        name="email"
+        control={control}
+        rules={{
           required: "Email is required",
           pattern: {
             value: /^\S+@\S+\.\S+$/,
             message: "Enter a valid email address"
           }
-        })}
+        }}
+        render={({ field, fieldState }) => (
+          <TextField
+            {...field}
+            value={field.value ?? ""}
+            label="Email address"
+            placeholder="student@example.com"
+            type="email"
+            error={Boolean(fieldState.error)}
+            helperText={fieldState.error?.message}
+            sx={{ gridColumn: "1 / -1" }}
+          />
+        )}
       />
 
-      <TextField
-        label="Registration number"
-        placeholder="FA21-BCS-001"
-        error={Boolean(errors.registrationNumber)}
-        helperText={errors.registrationNumber?.message}
-        sx={{ gridColumn: "1 / -1" }}
-        {...register("registrationNumber", {
+      {/* Registration Number */}
+      <Controller
+        name="registrationNumber"
+        control={control}
+        rules={{
           required: "Registration number is required",
           minLength: {
             value: 4,
             message: "Enter a valid registration number"
           }
-        })}
+        }}
+        render={({ field, fieldState }) => (
+          <TextField
+            {...field}
+            value={field.value ?? ""}
+            label="Registration number"
+            placeholder="FA21-BCS-001"
+            error={Boolean(fieldState.error)}
+            helperText={fieldState.error?.message}
+            sx={{ gridColumn: "1 / -1" }}
+          />
+        )}
       />
 
+      {/* Department */}
       <Controller
         name="department"
         control={control}
@@ -123,6 +150,7 @@ export default function StudentForm({ onSubmit, serverError }) {
         )}
       />
 
+      {/* Semester */}
       <Controller
         name="semester"
         control={control}
@@ -147,34 +175,53 @@ export default function StudentForm({ onSubmit, serverError }) {
         )}
       />
 
-      <TextField
-        label="Password"
-        placeholder="At least 6 characters"
-        type="password"
-        error={Boolean(errors.password)}
-        helperText={errors.password?.message}
-        {...register("password", {
+      {/* Password */}
+      <Controller
+        name="password"
+        control={control}
+        rules={{
           required: "Password is required",
           minLength: {
             value: 6,
             message: "Password must be at least 6 characters"
           }
-        })}
+        }}
+        render={({ field, fieldState }) => (
+          <TextField
+            {...field}
+            value={field.value ?? ""}
+            label="Password"
+            placeholder="At least 6 characters"
+            type="password"
+            error={Boolean(fieldState.error)}
+            helperText={fieldState.error?.message}
+          />
+        )}
       />
 
-      <TextField
-        label="Confirm password"
-        placeholder="Enter your password again"
-        type="password"
-        error={Boolean(errors.confirmPassword)}
-        helperText={errors.confirmPassword?.message}
-        {...register("confirmPassword", {
+      {/* Confirm Password */}
+      <Controller
+        name="confirmPassword"
+        control={control}
+        rules={{
           required: "Please confirm your password",
           validate: (value) =>
             value === password || "Passwords do not match"
-        })}
+        }}
+        render={({ field, fieldState }) => (
+          <TextField
+            {...field}
+            value={field.value ?? ""}
+            label="Confirm password"
+            placeholder="Enter your password again"
+            type="password"
+            error={Boolean(fieldState.error)}
+            helperText={fieldState.error?.message}
+          />
+        )}
       />
 
+      {/* Submit Button */}
       <Button
         type="submit"
         variant="contained"
