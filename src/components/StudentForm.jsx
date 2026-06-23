@@ -1,40 +1,11 @@
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Alert,
   Box,
   Button,
-  MenuItem,
-  TextField
+  MenuItem
 } from "@mui/material";
-
-// Reusable input component inside the same file
-function FormTextField({
-  name,
-  control,
-  rules,
-  children,
-  helperText,
-  ...textFieldProps
-}) {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field, fieldState }) => (
-        <TextField
-          {...textFieldProps}
-          {...field}
-          value={field.value ?? ""}
-          error={Boolean(fieldState.error)}
-          helperText={fieldState.error?.message ?? helperText}
-        >
-          {children}
-        </TextField>
-      )}
-    />
-  );
-}
+import FormTextField from "./forms/FormTextField";
 
 export default function StudentForm({ onSubmit, serverError }) {
   const {
@@ -203,7 +174,9 @@ export default function StudentForm({ onSubmit, serverError }) {
           }
         }}
       >
-        {isSubmitting ? "Creating account..." : "Create student account"}
+        {isSubmitting
+          ? "Creating account..."
+          : "Create student account"}
       </Button>
     </Box>
   );
