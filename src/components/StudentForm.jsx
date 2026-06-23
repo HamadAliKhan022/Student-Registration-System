@@ -7,12 +7,41 @@ import {
   TextField
 } from "@mui/material";
 
+// Reusable input component inside the same file
+function FormTextField({
+  name,
+  control,
+  rules,
+  children,
+  helperText,
+  ...textFieldProps
+}) {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field, fieldState }) => (
+        <TextField
+          {...textFieldProps}
+          {...field}
+          value={field.value ?? ""}
+          error={Boolean(fieldState.error)}
+          helperText={fieldState.error?.message ?? helperText}
+        >
+          {children}
+        </TextField>
+      )}
+    />
+  );
+}
+
 export default function StudentForm({ onSubmit, serverError }) {
   const {
     control,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting }
+    formState: { isSubmitting }
   } = useForm({
     mode: "onTouched",
     reValidateMode: "onChange",
@@ -55,32 +84,27 @@ export default function StudentForm({ onSubmit, serverError }) {
         </Alert>
       )}
 
-      {/* Full Name */}
-      <Controller
+      <FormTextField
         name="fullName"
         control={control}
+        label="Full name"
+        placeholder="Enter your full name"
+        sx={{ gridColumn: "1 / -1" }}
         rules={{
           required: "Full name is required",
           validate: (value) =>
-            value.trim().length >= 2 || "Enter at least 2 characters"
+            value.trim().length >= 2 ||
+            "Enter at least 2 characters"
         }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            value={field.value ?? ""}
-            label="Full name"
-            placeholder="Enter your full name"
-            error={Boolean(fieldState.error)}
-            helperText={fieldState.error?.message}
-            sx={{ gridColumn: "1 / -1" }}
-          />
-        )}
       />
 
-      {/* Email */}
-      <Controller
+      <FormTextField
         name="email"
         control={control}
+        label="Email address"
+        placeholder="student@example.com"
+        type="email"
+        sx={{ gridColumn: "1 / -1" }}
         rules={{
           required: "Email is required",
           pattern: {
@@ -88,24 +112,14 @@ export default function StudentForm({ onSubmit, serverError }) {
             message: "Enter a valid email address"
           }
         }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            value={field.value ?? ""}
-            label="Email address"
-            placeholder="student@example.com"
-            type="email"
-            error={Boolean(fieldState.error)}
-            helperText={fieldState.error?.message}
-            sx={{ gridColumn: "1 / -1" }}
-          />
-        )}
       />
 
-      {/* Registration Number */}
-      <Controller
+      <FormTextField
         name="registrationNumber"
         control={control}
+        label="Registration number"
+        placeholder="FA21-BCS-001"
+        sx={{ gridColumn: "1 / -1" }}
         rules={{
           required: "Registration number is required",
           minLength: {
@@ -113,72 +127,45 @@ export default function StudentForm({ onSubmit, serverError }) {
             message: "Enter a valid registration number"
           }
         }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            value={field.value ?? ""}
-            label="Registration number"
-            placeholder="FA21-BCS-001"
-            error={Boolean(fieldState.error)}
-            helperText={fieldState.error?.message}
-            sx={{ gridColumn: "1 / -1" }}
-          />
-        )}
       />
 
-      {/* Department */}
-      <Controller
+      <FormTextField
         name="department"
         control={control}
+        select
+        label="Department"
         rules={{
           required: "Select a department"
         }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            value={field.value ?? ""}
-            select
-            label="Department"
-            error={Boolean(fieldState.error)}
-            helperText={fieldState.error?.message}
-          >
-            <MenuItem value="CS">Computer Science</MenuItem>
-            <MenuItem value="SE">Software Engineering</MenuItem>
-            <MenuItem value="AI">Artificial Intelligence</MenuItem>
-            <MenuItem value="DS">Data Science</MenuItem>
-          </TextField>
-        )}
-      />
+      >
+        <MenuItem value="CS">Computer Science</MenuItem>
+        <MenuItem value="SE">Software Engineering</MenuItem>
+        <MenuItem value="AI">Artificial Intelligence</MenuItem>
+        <MenuItem value="DS">Data Science</MenuItem>
+      </FormTextField>
 
-      {/* Semester */}
-      <Controller
+      <FormTextField
         name="semester"
         control={control}
+        select
+        label="Semester"
         rules={{
           required: "Select a semester"
         }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            value={field.value ?? ""}
-            select
-            label="Semester"
-            error={Boolean(fieldState.error)}
-            helperText={fieldState.error?.message}
-          >
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((semester) => (
-              <MenuItem key={semester} value={String(semester)}>
-                Semester {semester}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
-      />
+      >
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((semester) => (
+          <MenuItem key={semester} value={String(semester)}>
+            Semester {semester}
+          </MenuItem>
+        ))}
+      </FormTextField>
 
-      {/* Password */}
-      <Controller
+      <FormTextField
         name="password"
         control={control}
+        label="Password"
+        placeholder="At least 6 characters"
+        type="password"
         rules={{
           required: "Password is required",
           minLength: {
@@ -186,42 +173,21 @@ export default function StudentForm({ onSubmit, serverError }) {
             message: "Password must be at least 6 characters"
           }
         }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            value={field.value ?? ""}
-            label="Password"
-            placeholder="At least 6 characters"
-            type="password"
-            error={Boolean(fieldState.error)}
-            helperText={fieldState.error?.message}
-          />
-        )}
       />
 
-      {/* Confirm Password */}
-      <Controller
+      <FormTextField
         name="confirmPassword"
         control={control}
+        label="Confirm password"
+        placeholder="Enter your password again"
+        type="password"
         rules={{
           required: "Please confirm your password",
           validate: (value) =>
             value === password || "Passwords do not match"
         }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            value={field.value ?? ""}
-            label="Confirm password"
-            placeholder="Enter your password again"
-            type="password"
-            error={Boolean(fieldState.error)}
-            helperText={fieldState.error?.message}
-          />
-        )}
       />
 
-      {/* Submit Button */}
       <Button
         type="submit"
         variant="contained"
